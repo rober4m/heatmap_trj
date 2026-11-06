@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Islas de calor en Santa cruz</title>
+
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { width: 100vw; height: 100vh; }
+
+    #legend {
+  position: absolute;   /* THIS makes it overlap */
+  bottom: 30px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  z-index: 10;          /* THIS ensures it is above the map */
+  transform: scale(0.5);          /* 0.7 = 70% of current size */
+  transform-origin: bottom left;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+    }
+    #legend h4 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+    }
+
+    #logo {
+      position: absolute;
+      top: 10px;
+      right: 50px;          /* leaves room for the map's zoom controls */
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px 12px;
+      border-radius: 8px;
+      z-index: 10;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="legend">
+  <h4>Temperatura superficial en Cochabamba</h4>
+  <img src="legend.png" style="width:300px; display:block;">
+  </div>
+
+  <div id="logo">
+  <img src="logo_cs.png" alt="CityStroom" style="width:180px; display:block;">
+  </div>
+
+  <div id="map"></div>
+
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <script>
+    mapboxgl.accessToken =
+      'pk.eyJ1Ijoicm9iZXJtIiwiYSI6ImNtazZrdXd5NjBtYmYzZXNoOXB3YmxweWEifQ.OcryZGeruMGRUOaCpAiO5w';
+
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/outdoors-v12',
+      center: [-64.725964, -21.527622],
+      zoom: 12,
+      pitch: 0,
+      bearing: -5
+    });
+
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    map.on('load', () => {
+
+
+      map.addSource('temp-img', {
+      type: 'image',
+      url: 'trj_heatmap_web.png',
+      coordinates: [
+        [-64.801032, -21.466888],  // top-left
+        [-64.650896, -21.466888],  // top-right
+        [-64.650896, -21.588355],  // bottom-right
+        [-64.801032, -21.588355]   // bottom-left
+      ]
+    });
+
+      map.addLayer({
+      id: 'temp-layer',
+      type: 'raster',
+      source: 'temp-img',
+      paint: { 'raster-opacity': 0.75 }
+    });
+
+      map.moveLayer('temp-layer');
+    
+    });
+  </script>
+</body>
+</html>
